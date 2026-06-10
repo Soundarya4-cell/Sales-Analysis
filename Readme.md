@@ -25,21 +25,44 @@ Also checked for and checked for error and empty values in dataset.
 * *Data Type Fix:* Changed CustomerID from a number to *Text* in both the Customer and Fact tables. Since IDs are relational codes (not numbers to be added or averaged), this prevents errors and improves performance.
 *Text Cleaning (Removing Messy Numbers):* The customer email list contained sequential index numbers prepended directly to the email strings (e.g., "1Aarav@gmail.com" up to "50..."). Used *By Digit to Non Digit from split column* to isolate the text pattern, stripping away the numeric prefixes automatically and leaving 100% clean email addresses.
 * *Standardizing Text:* The promotion table had text descriptions like "20% off" and "Buy 1 Get 1 Free". Used a *Conditional Column* to turn these into clean numbers (e.g., 20 and 50) under a new Percentage column so they can be used in math equations.
+
+
 ![Transformation Promotion](Images/Transformation_Promotion.png)
+
+
 * *Bringing in Price (Left Join):* Merged the Product table into the Fact table using a *Left Outer Join* to bring over the Price Per Unit. A Left Join was used instead of an Inner Join to ensure that no transaction rows are accidentally deleted if a product ID is missing or misspelled in the future.
+
+
 ![Transformation Price](Images/Transformation_FactTable_Price.png)
+
+
 * *Calculating Total Sales:* Added a *Custom Column* to calculate revenue for each row: 
   Total Sales = [Units Sold] * [Price Per Unit]
   Doing this math during the data load keeps the final Power BI report lightweight and fast.
-  ![Transformation NetSales](Images/Transformation_FactTable_TotalSales.png)
+
+
+![Transformation NetSales](Images/Transformation_FactTable_TotalSales.png)
+
+
 * *Bringing in Discount Percentage (Left Join):* Merged the Promotion table into the Fact table to bring over the Discount Percentage. Transactions that did not use a coupon code showed up as null. I used the *Replace Values* tool to switch these null values to 0. This keeps the data accurate and ready for calculation.
+
+
 ![Transformation Discount Percentage](Images/Transformation_FactTable_DiscountPercent.png)
+
+
 * *Calculating Discount Values:* Added a *Custom Column* to calculate Discount Value 
   Discount = [Total Sales] * ([Discount Percentage]/100)
+
+
 ![Transformation Discount Value](Images/Transformation_FactTable_DiscountValue.png)
+
+
 * *Calculating Net Sales:* Added a *Custom Column* to calculate Net Sales: 
   Net Sales = [Total Sales] - [Discount]
-  ![Transformation Net Sales](Images/Transformation_FactTable_NetSales.png)
+  
+
+![Transformation Net Sales](Images/Transformation_FactTable_NetSales.png)
+
 
 ### Data Modelling
 After completing the data preparation steps in Power Query, the tables were loaded into Power BI and structured into an optimized *Star Schema* to ensure fast report performance and clear data filtering.
